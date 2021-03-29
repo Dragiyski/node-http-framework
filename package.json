@@ -1,0 +1,18 @@
+{
+    "name": "@dragiyski/http-framework",
+    "version": "1.0.0",
+    "type": "module",
+    "devDependencies": {
+        "@babel/eslint-parser": "^7.13.10",
+        "eslint": "^7.23.0",
+        "eslint-config-standard": "^16.0.2",
+        "eslint-import-resolver-node": "^0.3.4",
+        "eslint-plugin-import": "^2.22.1"
+    },
+    "dependencies": {
+        "@dragiyski/collection": "bitbucket:dragiyski/dragiyski-collection",
+        "cookie": "^0.4.1",
+        "multiparty": "^4.2.2"
+    },
+    "main": "./index.js"
+}
