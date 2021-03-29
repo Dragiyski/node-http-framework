@@ -1,6 +1,6 @@
 import { isIPv6, isIP } from 'net';
 import { Stream } from 'stream';
-import { URL } from "url";
+import { URL } from 'url';
 
 export const properties = {
     stream: Symbol('stream')
@@ -49,6 +49,7 @@ export default class Request {
         request.localFamily = isIP(req.socket.localAddress);
         request.remoteFamily = isIP(req.socket.remoteAddress);
         request.ssl = req.socket?.ssl ?? null;
+        request.method = req.method.toUpperCase();
         return request;
     }
 

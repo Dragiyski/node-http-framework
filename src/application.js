@@ -5,6 +5,8 @@ import Request, { validateSNI } from './request.js';
 export const properties = {};
 
 export default class Application {
+    // TODO: Add constructor that assign front controller, a controller for error pages (http status codes),
+    //  a controller for errors and missing handlers (not found).
     async handle(req, res) {
         try {
             let duration = process.hrtime.bigint();
