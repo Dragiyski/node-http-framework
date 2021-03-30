@@ -3,7 +3,8 @@ export const properties = {
 };
 
 export const methods = {
-    processItems: Symbol('processItems')
+    processItems: Symbol('processItems'),
+    processAttributeMatch: Symbol('processAttributeMatch')
 };
 
 export class PathFilter {
@@ -53,23 +54,6 @@ export class PathFilter {
         }
         return false;
     }
-}
-
-Object.defineProperties(PathFilter, {
-    symbols: {
-        value: Object.freeze(Object.assign(Object.create(null), {
-            path: Symbol('path'),
-            filters: Symbol('filters'),
-            base: Symbol('base')
-        }))
-    }
-});
-
-export class PathDirectoryFilter extends PathFilter {
-    constructor(...items) {
-        super();
-        this[properties.items] = this[methods.processItems](items);
-    }
 
     [methods.processItems](items) {
         const list = [];
@@ -107,8 +91,56 @@ export class PathDirectoryFilter extends PathFilter {
                 if (attribute.min > attribute.max) {
                     throw new RangeError(`arguments[${i}]: attribute min must be less than attribute max`);
                 }
+                if (item.key != null) {
+                    attribute.key = this[methods.processAttributeMatch](i, 'key', item.key, []);
+                }
+                if (item.value == null) {
+                    throw new TypeError(`arguments[${i}]: attribute requires a value to match against`);
+                }
+                attribute.value = this[methods.processAttributeMatch](i, 'value', item.value, []);
+                if (item.toValue === 'function') {
+                    attribute.toValue = item.toValue.bind(item);
+                }
+                if (item.toPath === 'function') {
+                    attribute.toPath = item.toPath.bind(item);
+                }
+                list.push(attribute);
             }
         }
+    }
+
+    [methods.processAttributeMatch](index, property, value, target, ...stack) {
+        if (typeof value === 'string' || value instanceof RegExp) {
+            target.push(value);
+            return;
+        }
+        if (typeof value[Symbol.iterator] === 'function') {
+            if (stack.includes(value)) {
+                throw new TypeError(`arguments[${index}][${property}]: circular reference in nested iterables`);
+            }
+            for (const item of value) {
+                this[methods.processAttributeMatch](index, property, item, target, ...stack, value);
+            }
+            return;
+        }
+        throw new TypeError(`arguments[${index}][${property}]: Expected string, RegExp or Iterable<string, RegExp>, got ${Object.prototype.toString.call(value)}`);
+    }
+}
+
+Object.defineProperties(PathFilter, {
+    symbols: {
+        value: Object.freeze(Object.assign(Object.create(null), {
+            path: Symbol('path'),
+            filters: Symbol('filters'),
+            base: Symbol('base')
+        }))
+    }
+});
+
+export class PathDirectoryFilter extends PathFilter {
+    constructor(...items) {
+        super();
+        this[properties.items] = this[methods.processItems](items);
     }
 
     match(path) {

@@ -81,22 +81,24 @@ per file, or combining multiple simple controller into one module.
 
 # Routing
 
-Routing is a two-way process containing matching and generating.
+Controllers are useful, but not all controllers must be executed for all
+request. The application can add routes with filters. There will be at least
+two types of filters: `MethodFilter` and `PathFilter`. The `PathFilter` must
+offer a way to describe attributes as path of the filter.
 
-In the matching phase, the router read properties of the request like the request
-method and the request path and filter controllers. The matching process
-can also extract attributes from the requested path.
+To support chaining the controllers and filters must be separate from the
+application class. This will allow controllers to be a list of filters that
+will filter the request more. For example, an application may have two
+controllers for `/store` and `/admin`. The controller for `/store` might be
+a collection of controllers for `/store/product` and `/store/category`, etc.
 
-In the generating phase, the router accept properties and generate a request
-object that would match the given route. While the request object is not
-complete request (it won't contain all necessary headers), it would contain
-initial information to set up a client request. Alternatively, a request
-property can be used in the generation of response. For example, the request
-location can be used to write an absolute or relative URL for a route to
-an HTML.
+Allowing such chaining will allow controllers to create a tree.
+In other words the router must be controller itself. The app can have a
+single front controller which will be most likely controller list.
 
-The router can also extract attributes from the path. This can be used to
-create fancy URLs.
+Because `PathFilter` instances are objects, they can be referenced by
+multiple objects. A map can be created to store a named `PathFilter`. Those
+filters can be used to generate an URL. Filters can be controller themselves.
 
 # Response
 
