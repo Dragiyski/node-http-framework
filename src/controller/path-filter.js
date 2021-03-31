@@ -1,4 +1,5 @@
 export const properties = {
+    parent: Symbol('parent'),
     items: Symbol('items')
 };
 
@@ -8,7 +9,8 @@ export const methods = {
 };
 
 export class PathFilter {
-    constructor() {
+    constructor(definition, options) {
+        options = { ...options };
         if (new.target === PathFilter) {
             throw new TypeError('Illegal constructor');
         }
@@ -123,7 +125,8 @@ export class PathFilter {
             }
             return;
         }
-        throw new TypeError(`arguments[${index}][${property}]: Expected string, RegExp or Iterable<string, RegExp>, got ${Object.prototype.toString.call(value)}`);
+        throw new TypeError(`arguments[${index}][${property}]: Expected string, RegExp or Iterable<string, RegExp>, got ${Object.prototype.toString.call(
+            value)}`);
     }
 }
 
@@ -256,3 +259,4 @@ export class PathStringFilter extends PathFilter {
         this[properties.items] = items;
     }
 }
+
