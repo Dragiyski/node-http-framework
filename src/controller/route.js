@@ -43,8 +43,7 @@ export class Route {
      * `toValue`. For now this is not essential.
      *
      * @abstract
-     * @param {string|URL} path The request path to match. Only the pathname of URL is looked up. The query attributes
-     * are not extracted.
+     * @param {string} path The request path to match.
      * @param {object} attributes The receiver for the attributes encountered on the path.
      * @returns {string|null} Returns the remaining path or null if not a match. If remaining path is empty, it will be
      * an empty string or slash depending on whether directories are matched or exact path.
@@ -84,6 +83,7 @@ export class Route {
                     throw new TypeError(`Invalid definition[${index}]: expected [object String] or [object Symbol] for attribute name, got ${Object.prototype.toString.call(item.name)}`);
                 }
                 const attribute = Object.create(null);
+                attribute.name = item.name;
                 if (item.min != null) {
                     if (!['number', 'bigint'].indexOf(item.min)) {
                         throw new TypeError(`Invalid definition[${index}][min]: expected [object Number] or [object BigInt], got ${Object.prototype.toString.call(item.min)}`);
@@ -113,10 +113,10 @@ export class Route {
                     throw new TypeError(`Invalid definition[${index}]: missing definition value`);
                 }
                 attribute.value = processAttributeMatch(index, 'value', item.value, []);
-                if (item.toValue === 'function') {
+                if (typeof item.toValue === 'function') {
                     attribute.toValue = item.toValue.bind(item);
                 }
-                if (item.toPath === 'function') {
+                if (typeof item.toPath === 'function') {
                     attribute.toPath = item.toPath.bind(item);
                 }
                 return attribute;
@@ -126,7 +126,7 @@ export class Route {
         function processAttributeMatch(index, property, value, target, ...stack) {
             if (typeof value === 'string' || value instanceof RegExp) {
                 target.push(value);
-                return;
+                return target;
             }
             if (typeof value[Symbol.iterator] === 'function') {
                 if (stack.includes(value)) {
@@ -135,7 +135,7 @@ export class Route {
                 for (const item of value) {
                     processAttributeMatch(index, property, item, target, ...stack, value);
                 }
-                return;
+                return target;
             }
             throw new TypeError(`arguments[${index}][${property}]: Expected string, RegExp or Iterable<string, RegExp>, got ${Object.prototype.toString.call(value)}`);
         }
@@ -235,16 +235,21 @@ export class DirectoryRoute extends Route {
                     data.push(value);
                 }
             }
-            if (attribute.name in attributes) {
-                if (!Array.isArray(attributes[attribute.name])) {
-                    attributes[attribute.name] = [attributes[attribute.name]];
+            if (data.length > 0) {
+                if (data.length <= 1) {
+                    data = data[0];
                 }
-                attributes[attribute.name].concat(data);
-            } else {
-                if (!Array.isArray(data) && attribute.array) {
-                    data = [data];
+                if (attribute.name in attributes) {
+                    if (!Array.isArray(attributes[attribute.name])) {
+                        attributes[attribute.name] = [attributes[attribute.name]];
+                    }
+                    attributes[attribute.name].concat(data);
+                } else {
+                    if (!Array.isArray(data) && attribute.array) {
+                        data = [data];
+                    }
+                    attributes[attribute.name] = data;
                 }
-                attributes[attribute.name] = data;
             }
             return true;
         }
