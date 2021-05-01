@@ -125,8 +125,7 @@ export class PathFilter {
             }
             return;
         }
-        throw new TypeError(`arguments[${index}][${property}]: Expected string, RegExp or Iterable<string, RegExp>, got ${Object.prototype.toString.call(
-            value)}`);
+        throw new TypeError(`arguments[${index}][${property}]: Expected string, RegExp or Iterable<string, RegExp>, got ${Object.prototype.toString.call(value)}`);
     }
 }
 
