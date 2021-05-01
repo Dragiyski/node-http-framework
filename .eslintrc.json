@@ -20,6 +20,7 @@
             "parserOpts": {
                 "allowAwaitOutsideFunction": true,
                 "plugins": [
+                    "estree",
                     "topLevelAwait",
                     "asyncGenerators",
                     "classPrivateMethods",
@@ -42,7 +43,9 @@
         "node": true
     },
     "globals": {
-        "globalThis": "readonly"
+        "globalThis": "readonly",
+        "Event": "readonly",
+        "EventTarget": "readonly"
     },
     "rules": {
         "indent": [
@@ -87,6 +90,7 @@
         "no-return-assign": "off",
         "no-debugger": "off",
         "no-labels": "off",
-        "no-void": "off"
+        "no-void": "off",
+        "camelcase": "off"
     }
 }

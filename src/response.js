@@ -7,16 +7,15 @@ export const properties = {
 };
 
 export default class Response {
-
     constructor(statusCode = 200, headers = {}) {
         this[properties.headers] = Object.create(null);
         this[properties.trailers] = Object.create(null);
-        if(statusCode == null) {
+        if (statusCode == null) {
             statusCode = 200;
         } else if (typeof statusCode === 'object') {
             headers = statusCode;
             statusCode = 200;
-        } else if(Object.prototype.hasOwnProperty.call(STATUS_CODES, statusCode)) {
+        } else if (Object.prototype.hasOwnProperty.call(STATUS_CODES, statusCode)) {
             throw new TypeError(`Invalid status code: expected one of the defined HTTP codes: [${Object.keys(STATUS_CODES).join(', ')}]`);
         }
         this[properties.statusCode] = statusCode;

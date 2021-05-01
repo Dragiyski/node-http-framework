@@ -1,13 +1,15 @@
 // eslint-disable-next-line camelcase
 import { constants as http2_const } from 'http2';
+import { EventEmitter } from 'events';
 import Request, { validateSNI } from './request.js';
 
 export const properties = {};
 
-export default class Application {
+export default class Application extends EventEmitter {
     // TODO: Add constructor that assign front controller, a controller for error pages (http status codes),
     //  a controller for errors and missing handlers (not found).
-    async handle(req, res) {
+    async handle(req, res, options) {
+        options = { ...options };
         try {
             let duration = process.hrtime.bigint();
             const request = Request.fromHttpRequest(req);
@@ -43,7 +45,7 @@ export default class Application {
                 },
                 report() {
                     duration = process.hrtime.bigint() - duration;
-                    console.log(`[${(new Date()).toISOString()}][server.request]: ${(Number(duration) / 1e6).toFixed(3)}ms ${request.remoteAddress} ${request.remotePort} ${request.localAddress} ${request.localPort} ${readLength} ${writeLength} ${res.statusCode} HTTP/${request.httpVersion} ${request.method} ${request.location}`)
+                    console.log(`[${(new Date()).toISOString()}][server.request]: ${(Number(duration) / 1e6).toFixed(3)}ms ${request.remoteAddress} ${request.remotePort} ${request.localAddress} ${request.localPort} ${readLength} ${writeLength} ${res.statusCode} HTTP/${request.httpVersion} ${request.method} ${request.location}`);
                 }
             };
             req.on('data', byteCounter.requestData).once('end', byteCounter.requestEnd).once('error', byteCounter.requestEnd);

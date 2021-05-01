@@ -10,9 +10,12 @@
         "eslint-plugin-import": "^2.22.1"
     },
     "dependencies": {
-        "@dragiyski/collection": "bitbucket:dragiyski/dragiyski-collection",
         "cookie": "^0.4.1",
+        "mime": "^2.5.2",
         "multiparty": "^4.2.2"
     },
-    "main": "./index.js"
+    "main": "./index.js",
+    "workspaces": [
+        "lib/web-dom-exception"
+    ]
 }
