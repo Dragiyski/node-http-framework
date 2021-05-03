@@ -1,27 +1,24 @@
 import node_net from 'node:net';
 import node_util from 'node:util';
 import { EventEmitter } from 'node:events';
-import Port, { ServerPort } from './port.js';
+import Port, { NetworkStreamPort } from './port.js';
 
 export const internal = Symbol('HttpServer');
 
 export default class HttpServer extends EventEmitter {
-    constructor(controller, options) {
+    constructor(options) {
         super();
-        if (typeof controller !== 'function') {
-            throw new TypeError('Invalid arguments[0]: expected a function');
-        }
         if (options == null) {
             options = {};
         }
         if (options !== Object(options)) {
-            throw new TypeError('Invalid arguments[1]: expected an object, if specified');
+            throw new TypeError(`Invalid options: expected an object, if specified, got ${typeof options}`);
         }
         let ports = options.port;
         if (ports == null) {
-            ports = new ServerPort(80);
+            ports = new NetworkStreamPort(80);
         } else if (ports !== Object(ports)) {
-            throw new TypeError(`Invalid options "port": expected an object`);
+            throw new TypeError(`Invalid options "port": expected an object, got ${typeof ports}`);
         }
         if (ports instanceof Port) {
             ports = [ports];

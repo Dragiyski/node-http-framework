@@ -17,7 +17,7 @@ export default class Port {
     }
 }
 
-class ServerPort extends Port {
+class NetworkStreamPort extends Port {
     constructor(port, hostname) {
         super();
         if (!Number.isSafeInteger(port) || port <= 0 || port > 65536) {
@@ -91,8 +91,8 @@ class ServerPort extends Port {
     }
 }
 
-const proxyServerPort = new Proxy(ServerPort, callAsFunctionHandler);
+const proxyNetworkStreamPort = new Proxy(NetworkStreamPort, callAsFunctionHandler);
 
 export {
-    proxyServerPort as ServerPort
+    proxyNetworkStreamPort as NetworkStreamPort
 };

@@ -43,7 +43,11 @@ class SecureContext {
                 thisOptions[option] = options[option];
             }
         }
-        this[properties.options] = thisOptions;
+        this[properties.options] = Object.freeze(thisOptions);
+    }
+
+    get options() {
+        return this[properties.options];
     }
 
     apply(target) {
